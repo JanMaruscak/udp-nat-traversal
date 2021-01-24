@@ -1,0 +1,15 @@
+C:\Users\janma\source\repos\udp\udp\bin\Debug\netcoreapp3.1\udp.exe
+C:\Users\janma\source\repos\udp\udp\bin\Debug\netcoreapp3.1\udp.deps.json
+C:\Users\janma\source\repos\udp\udp\bin\Debug\netcoreapp3.1\udp.runtimeconfig.json
+C:\Users\janma\source\repos\udp\udp\bin\Debug\netcoreapp3.1\udp.runtimeconfig.dev.json
+C:\Users\janma\source\repos\udp\udp\bin\Debug\netcoreapp3.1\udp.dll
+C:\Users\janma\source\repos\udp\udp\bin\Debug\netcoreapp3.1\udp.pdb
+C:\Users\janma\source\repos\udp\udp\bin\Debug\netcoreapp3.1\STUN.dll
+C:\Users\janma\source\repos\udp\udp\obj\Debug\netcoreapp3.1\udp.csprojAssemblyReference.cache
+C:\Users\janma\source\repos\udp\udp\obj\Debug\netcoreapp3.1\udp.AssemblyInfoInputs.cache
+C:\Users\janma\source\repos\udp\udp\obj\Debug\netcoreapp3.1\udp.AssemblyInfo.cs
+C:\Users\janma\source\repos\udp\udp\obj\Debug\netcoreapp3.1\udp.csproj.CoreCompileInputs.cache
+C:\Users\janma\source\repos\udp\udp\obj\Debug\netcoreapp3.1\udp.csproj.CopyComplete
+C:\Users\janma\source\repos\udp\udp\obj\Debug\netcoreapp3.1\udp.dll
+C:\Users\janma\source\repos\udp\udp\obj\Debug\netcoreapp3.1\udp.pdb
+C:\Users\janma\source\repos\udp\udp\obj\Debug\netcoreapp3.1\udp.genruntimeconfig.cache

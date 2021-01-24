@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "UTdSWNqB9oVVPYTMlL4SotrG/+fErGPTxE6abYg70s/iLdBtuJ6O2w0bivk1Lz1EeAdkJyQJenFb/hYBCt15LQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\janma\\source\\repos\\udp\\udp\\udp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\janma\\.nuget\\packages\\stun\\0.5.0\\stun.0.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}

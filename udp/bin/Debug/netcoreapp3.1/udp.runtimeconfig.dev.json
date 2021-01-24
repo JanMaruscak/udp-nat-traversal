@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\janma\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\janma\\.nuget\\packages"
+    ]
+  }
+}
