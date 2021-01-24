@@ -108,7 +108,7 @@ namespace udp
                     var msg = Encoding.ASCII.GetBytes(packet.AutoResponse().ToString());
                     udpClient.Send(msg, msg.Length, remoteEp);
                     Console.WriteLine($">>> keep alive {remoteEp.Address}");
-                    Console.WriteLine($"sending keep alive reply");
+                    Console.WriteLine($"--- sending keep alive reply");
                 }
                 else if (packet is KeepAliveReply)
                 {
@@ -126,21 +126,21 @@ namespace udp
                         try
                         {
                             magicToken = Convert.FromBase64String(token);
+
+                            if (Convert.ToBase64String(magicToken) == Convert.ToBase64String(MyToken))
+                            {
+                                continue;
+                            }
+                            var ep = new IPEndPoint(new IPAddress(magicToken[0..^2]), BitConverter.ToUInt16(magicToken[^2..]));
+                            if (!Remotes.Contains(ep))
+                            {
+                                Remotes.Add(ep);
+                                addedAny = true;
+                            }
                         }
                         catch (Exception)
                         {
                             continue;
-                        }
-
-                        if (Convert.ToBase64String(magicToken) == Convert.ToBase64String(MyToken))
-                        {
-                            continue;
-                        }
-                        var ep = new IPEndPoint(new IPAddress(magicToken[0..^2]), BitConverter.ToUInt16(magicToken[^2..]));
-                        if (!Remotes.Contains(ep))
-                        {
-                            Remotes.Add(ep);
-                            addedAny = true;
                         }
                     }
                     if (addedAny)
@@ -161,7 +161,7 @@ namespace udp
                     foreach (var ep in Remotes)
                     {
                         var msg = Encoding.ASCII.GetBytes(keepAlive.ToString());
-                        Console.WriteLine("sending keep alive");
+                        Console.WriteLine("--- sending keep alive");
                         udpClient.Send(msg, msg.Length, ep);
                     }
                     Thread.Sleep(30000);
@@ -180,7 +180,7 @@ namespace udp
             foreach (var ep in Remotes)
             {
                 var msg = Encoding.ASCII.GetBytes(magic.ToString());
-                Console.WriteLine("?????? sending magic");
+                Console.WriteLine("--- sending magic");
                 udpClient.Send(msg, msg.Length, ep);
             }
         }
