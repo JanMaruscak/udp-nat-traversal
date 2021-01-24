@@ -7,7 +7,6 @@ namespace udp
 {
     public class Packet
     {
-        public IPEndPoint SourceIP { get; set; }
         public int Index { get; set; }
         public string Message { get; set; }
 

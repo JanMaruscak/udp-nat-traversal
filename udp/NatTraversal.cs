@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -11,7 +13,7 @@ namespace udp
 {
     internal class NatTraversal
     {
-        public static List<IPEndPoint> Remotes = new List<IPEndPoint>();
+        public static ConcurrentDictionary<IPEndPoint, int> Remotes = new ConcurrentDictionary<IPEndPoint, int>();
         public static UdpClient udpClient;
         public static byte[] MyToken;
 
@@ -49,7 +51,7 @@ namespace udp
 
                     var remoteEp = new IPEndPoint(new IPAddress(magicToken[0..^2]),
                         BitConverter.ToUInt16(magicToken[^2..]));
-                    Remotes.Add(remoteEp);
+                    Remotes.TryAdd(remoteEp, 0);
 
                     var ms = Encoding.ASCII.GetBytes("holepunch");
                     udpClient.Send(ms, ms.Length, remoteEp);
@@ -70,7 +72,7 @@ namespace udp
                     var scamMagic = new MagicToken("wmorozova");
                     var sendByte = Encoding.ASCII.GetBytes(scamMagic.ToString());
                     foreach (var ep in Remotes)
-                        udpClient.Send(sendByte, sendByte.Length, ep);
+                        udpClient.Send(sendByte, sendByte.Length, ep.Key);
                 }
                 else
                 {
@@ -82,7 +84,7 @@ namespace udp
                     var lol = Encoding.ASCII.GetString(sendByte);
 
                     foreach (var ep in Remotes)
-                        udpClient.Send(sendByte, sendByte.Length, ep);
+                        udpClient.Send(sendByte, sendByte.Length, ep.Key);
                 }
             }
         }
@@ -108,6 +110,10 @@ namespace udp
                     var msg = Encoding.ASCII.GetBytes(packet.AutoResponse().ToString());
                     udpClient.Send(msg, msg.Length, remoteEp);
                     Console.WriteLine($">>> keep alive {remoteEp.Address}");
+                    lock (Remotes)
+                    {
+                        Remotes[remoteEp] = 0;
+                    }
                     Console.WriteLine($"--- sending keep alive reply");
                 }
                 else if (packet is KeepAliveReply)
@@ -132,10 +138,13 @@ namespace udp
                                 continue;
                             }
                             var ep = new IPEndPoint(new IPAddress(magicToken[0..^2]), BitConverter.ToUInt16(magicToken[^2..]));
-                            if (!Remotes.Contains(ep))
+                            lock (Remotes)
                             {
-                                Remotes.Add(ep);
-                                addedAny = true;
+                                if (!Remotes.Keys.Contains(ep))
+                                {
+                                    Remotes.TryAdd(ep, 0);
+                                    addedAny = true;
+                                }
                             }
                         }
                         catch (Exception)
@@ -158,14 +167,29 @@ namespace udp
             {
                 lock (Remotes)
                 {
+                    var tokensToRemove = new List<IPEndPoint>();
                     foreach (var ep in Remotes)
                     {
                         var msg = Encoding.ASCII.GetBytes(keepAlive.ToString());
                         Console.WriteLine("--- sending keep alive");
-                        udpClient.Send(msg, msg.Length, ep);
+                        udpClient.Send(msg, msg.Length, ep.Key);
+                        Remotes[ep.Key] += 1;
+
+                        if (Remotes[ep.Key] == 3)
+                        {
+                            Console.WriteLine($"--- {ep.Key.Address} is not responding to keep alive");
+                        }
+                        if (Remotes[ep.Key] == 4)
+                        {
+                            tokensToRemove.Add(ep.Key);
+                        }
                     }
-                    Thread.Sleep(30000);
+                    foreach (var token in tokensToRemove)
+                    {
+                        Remotes.TryRemove(token, out int value);
+                    }
                 }
+                Thread.Sleep(30000);
             }
         }
 
@@ -174,14 +198,14 @@ namespace udp
             var magic = new MagicToken("");
             foreach (var ep in Remotes)
             {
-                var magicToken = EndToString(ep);
+                var magicToken = EndToString(ep.Key);
                 magic.Message += $"{magicToken};";
             }
             foreach (var ep in Remotes)
             {
                 var msg = Encoding.ASCII.GetBytes(magic.ToString());
                 Console.WriteLine("--- sending magic");
-                udpClient.Send(msg, msg.Length, ep);
+                udpClient.Send(msg, msg.Length, ep.Key);
             }
         }
 
